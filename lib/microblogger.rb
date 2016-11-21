@@ -1,4 +1,5 @@
 require 'twitter'
+require 'bitly'
 
 class MicroBlogger
 	attr_reader :client
@@ -17,7 +18,7 @@ class MicroBlogger
     puts "Welcome to Kyle's Twitter Client!"
     command = ""
     while command != "q"
-      printf "Enter command: t,q,dm,spam,elt:  "
+      printf "Enter command: t,q,dm,spam,elt,s,turl:  "
       input = gets.chomp
       parts = input.split(" ")
       command = parts[0]
@@ -33,6 +34,9 @@ class MicroBlogger
       when 'dm' then dm(parts[1], parts[2..-1].join(" "))
       when 'spam' then spam_my_followers(parts[1..-1].join(" "))
       when 'elt' then everyones_last_tweet
+      when 's' then shorten(parts[1..-1].join(" "))
+      when 'turl' 
+        tweet (parts[1..-2].join(" ") + " " + shorten(parts[-1]))
       else
         puts "Sorry, don't know that command"
       end
@@ -81,7 +85,14 @@ class MicroBlogger
       puts
     end
   end
+
+  def shorten(original_url)
+    Bitly.use_api_version_3
+    bitly = Bitly.new('hungryacademy', 'R_430e9f62250186d2612cca76eee2dbc6')
+    return bitly.shorten(original_url).short_url
+  end
 end
+
 
 blogger = MicroBlogger.new
 blogger.run
